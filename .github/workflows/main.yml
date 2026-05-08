@@ -17,7 +17,7 @@ jobs:
 
     - run: npm init -y
 
-    - run: npm install playwright googleapis
+    - run: npm install playwright googleapis @xenova/transformers
 
     - run: npx playwright install
 
