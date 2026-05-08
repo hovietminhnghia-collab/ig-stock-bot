@@ -32,7 +32,7 @@ async function run() {
   const page = await browser.newPage();
   const classifier = await pipeline(
   'zero-shot-classification',
-  'Xenova/distilbart-mnli-12-1'
+'Xenova/mobilebert-uncased-mnli'
 );
 
   for(let i = 0; i < rows.length; i++) {
