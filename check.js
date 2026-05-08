@@ -1,26 +1,69 @@
-name: IG BOT
+const { chromium } = require('playwright');
+const { google } = require('googleapis');
 
-on:
-  workflow_dispatch:
+const creds = JSON.parse(process.env.GOOGLE_KEY);
 
-jobs:
-  check:
-    runs-on: ubuntu-latest
+async function run() {
 
-    steps:
+  const auth = new google.auth.GoogleAuth({
+    credentials: creds,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  });
 
-    - uses: actions/checkout@v4
+  const sheets = google.sheets({
+    version: 'v4',
+    auth
+  });
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
+  const spreadsheetId = '1IGMiGLr-JvE0I_KaWgR-oY_520UJ1i6E662b1JAfDcc';
 
-    - run: npm init -y
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: 'B2:B'
+  });
 
-    - run: npm install playwright googleapis
+  const rows = response.data.values;
 
-    - run: npx playwright install
+  const browser = await chromium.launch({
+    headless: true
+  });
 
-    - run: node check.js
-      env:
-        GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
+  const page = await browser.newPage();
+
+  for(let i = 0; i < rows.length; i++) {
+
+    const url = rows[i][0];
+
+    console.log('Checking:', url);
+
+    await page.goto(url, {
+      waitUntil: 'networkidle'
+    });
+
+    const content = await page.content();
+
+    let stock = 'Còn';
+
+    if(content.includes('❌SOLD❌')) {
+
+      stock = 'Không';
+    }
+
+    const rowNumber = i + 2;
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `C${rowNumber}`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [[stock]]
+      }
+    });
+
+    console.log(`Row ${rowNumber} => ${stock}`);
+  }
+
+  await browser.close();
+}
+
+run();
