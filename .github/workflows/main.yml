@@ -3,6 +3,9 @@ name: IG BOT
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: '0 * * * *'
+
 jobs:
   check:
     runs-on: ubuntu-latest
