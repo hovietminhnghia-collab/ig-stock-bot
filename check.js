@@ -1,5 +1,6 @@
 const { chromium } = require('playwright');
 const { google } = require('googleapis');
+const { pipeline } = require('@xenova/transformers');
 
 const creds = JSON.parse(process.env.GOOGLE_KEY);
 
@@ -29,6 +30,10 @@ async function run() {
   });
 
   const page = await browser.newPage();
+  const classifier = await pipeline(
+  'zero-shot-classification',
+  'Xenova/distilbart-mnli-12-1'
+);
 
   for(let i = 0; i < rows.length; i++) {
 
@@ -42,14 +47,23 @@ async function run() {
 
     const content = await page.content();
 
-    let stock = 'Còn';
+let stock = 'Còn';
 
-    if(content.includes('❌SOLD❌')) {
+const result = await classifier(
+  content,
+  [
+    'Sản phẩm còn hàng',
+    'Sản phẩm đã hết hàng'
+  ]
+);
 
-      stock = 'Không';
-    }
+console.log(result);
 
-    const rowNumber = i + 2;
+if (
+  result.labels[0] === 'Sản phẩm đã hết hàng'
+) {
+  stock = 'Không';
+}
 
     await sheets.spreadsheets.values.update({
       spreadsheetId,
