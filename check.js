@@ -1,31 +1,26 @@
-const { chromium } = require('playwright');
+name: IG BOT
 
-(async() => {
+on:
+  workflow_dispatch:
 
-  const browser = await chromium.launch({
-    headless: true
-  });
+jobs:
+  check:
+    runs-on: ubuntu-latest
 
-  const page = await browser.newPage();
+    steps:
 
-  await page.goto(
-    'https://www.instagram.com/p/C_iZnT_vqgI/?igsh=NTNpcnl3bDB6bXlp',
-    {
-      waitUntil: 'networkidle'
-    }
-  );
+    - uses: actions/checkout@v4
 
-  const content = await page.content();
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
 
-  if(content.includes('❌SOLD❌')) {
+    - run: npm init -y
 
-    console.log('HET HANG');
+    - run: npm install playwright googleapis
 
-  } else {
+    - run: npx playwright install
 
-    console.log('CON HANG');
-  }
-
-  await browser.close();
-
-})();
+    - run: node check.js
+      env:
+        GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
