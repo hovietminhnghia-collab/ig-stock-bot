@@ -45,8 +45,14 @@ async function run() {
       waitUntil: 'networkidle'
     });
 
-    const content = await page.evaluate(() => {
-  return document.body.innerText;
+const content = await page.evaluate(() => {
+
+  const meta =
+    document.querySelector(
+      'meta[property="og:description"]'
+    );
+
+  return meta ? meta.content : '';
 });
     const shortContent = content.slice(0, 3000);
 
@@ -67,7 +73,7 @@ if (
 ) {
   stock = 'Không';
 }
-
+const rowNumber = i + 2;
     await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: `C${rowNumber}`,
