@@ -45,12 +45,15 @@ async function run() {
       waitUntil: 'networkidle'
     });
 
-    const content = await page.content();
+    const content = await page.evaluate(() => {
+  return document.body.innerText;
+});
+    const shortContent = content.slice(0, 3000);
 
 let stock = 'Còn';
 
 const result = await classifier(
-  content,
+  shortContent,
   [
     'Sản phẩm còn hàng',
     'Sản phẩm đã hết hàng'
