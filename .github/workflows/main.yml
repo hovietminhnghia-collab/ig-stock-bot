@@ -25,6 +25,6 @@ jobs:
 
     - run: npx playwright install
 
-    - run: node stock.js
+    - run: node check.js
       env:
         GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
