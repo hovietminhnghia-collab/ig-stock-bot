@@ -58,6 +58,34 @@ const content = await page.evaluate(() => {
 
 let stock = 'Còn';
 
+let votes = 0;
+
+// ===== RULE ENGINE =====
+
+const hardKeywords = [
+  '❌sold❌',
+  'sold out',
+  'đã có chủ',
+  'bán hết',
+  'hết hàng',
+  'taken',
+  'pass',
+  'bay rồi',
+  'không còn'
+];
+
+const lowerText = shortContent.toLowerCase();
+
+const matchedKeyword = hardKeywords.some(
+  keyword => lowerText.includes(keyword)
+);
+
+if(matchedKeyword) {
+  votes += 2;
+}
+
+// ===== AI =====
+
 const result = await classifier(
   shortContent,
   [
@@ -70,8 +98,22 @@ console.log(result);
 
 if (
   result.labels[0] === 'Sản phẩm đã hết hàng'
+  &&
+  result.scores[0] > 0.85
 ) {
+  votes++;
+}
+
+// ===== FINAL DECISION =====
+
+if(votes >= 2) {
   stock = 'Không';
+}
+else if(votes === 1) {
+  stock = 'CHECK';
+}
+else {
+  stock = 'Còn';
 }
 const rowNumber = i + 2;
     await sheets.spreadsheets.values.update({
