@@ -28,24 +28,3 @@ jobs:
     - run: node stock.js
       env:
         GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
-
-  price:
-    runs-on: ubuntu-latest
-
-    steps:
-
-    - uses: actions/checkout@v4
-
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-
-    - run: npm init -y
-
-    - run: npm install playwright googleapis
-
-    - run: npx playwright install
-
-    - run: node price.js
-      env:
-        GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
