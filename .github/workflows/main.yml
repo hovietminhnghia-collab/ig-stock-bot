@@ -13,18 +13,19 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - run: npm init -y
+      - run: npm init -y
 
-   - run: npm install playwright googleapis @google/generative-ai
+      - run: npm install playwright googleapis @google/generative-ai
 
-    - run: npx playwright install
+      - run: npx playwright install
 
-    - run: node check.js
-      env:
-        GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
+      - run: node check.js
+        env:
+          GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
