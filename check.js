@@ -58,7 +58,9 @@ const content = await page.evaluate(() => {
     .map(s => s.innerText)
     .join(' ');
 });
-    const shortContent = content.slice(0, 3000);
+const shortContent = content
+  .replace(/\s+/g, ' ')
+  .slice(0, 500);
 if(!shortContent.trim()) {
 
   console.log('NO CONTENT');
@@ -84,7 +86,7 @@ const hardKeywords = [
 ];
 
 const lowerText = shortContent.toLowerCase();
-
+console.log(lowerText);
 const matchedKeyword = hardKeywords.some(
   keyword => lowerText.includes(keyword)
 );
