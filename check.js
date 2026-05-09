@@ -29,7 +29,23 @@ async function run() {
   });
 
   const page = await browser.newPage();
+await page.route('**/*', route => {
 
+  const type = route.request().resourceType();
+
+  if (
+    type === 'image'
+    ||
+    type === 'media'
+    ||
+    type === 'font'
+  ) {
+    route.abort();
+  }
+  else {
+    route.continue();
+  }
+});
   for(let i = 0; i < rows.length; i++) {
 
     const url = rows[i][0];
@@ -41,7 +57,7 @@ await page.goto(url, {
   timeout: 60000
 });
 
-await page.waitForTimeout(5000);
+await page.waitForTimeout(1500);
 const content = await page.evaluate(() => {
 
   const title =
@@ -54,7 +70,11 @@ const content = await page.evaluate(() => {
       'meta[property="og:description"]'
     )?.content || '';
 
-  return `${title} ${description}`;
+  return `
+    ${title}
+    ${description}
+    ${document.body.innerText}
+  `;
 });
 const shortContent = content
   .replace(/\s+/g, ' ')
