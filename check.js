@@ -53,10 +53,10 @@ await page.route('**/*', route => {
     console.log('Checking:', url);
 
 await page.goto(url, {
-  waitUntil: 'domcontentloaded',
+  waitUntil: 'networkidle',
   timeout: 60000
 });
-
+await page.waitForSelector('body');
 await page.waitForTimeout(1500);
 const content = await page.evaluate(() => {
 
@@ -91,13 +91,33 @@ let stock = 'Còn';
 let price = '_';
 // ===== MAIN PRICE =====
 
-const mainPriceMatch = lowerText.match(
-  /giá\s*[:\-]?\s*\n?\s*(\d+[.,]?\d*\s?(k|tr|m|đ|vnđ)?)/i
-);
+const lines = content
+  .split('\n')
+  .map(line => line.trim());
 
-if(mainPriceMatch) {
+for(let j = 0; j < lines.length; j++) {
 
-  price = mainPriceMatch[1];
+  const line = lines[j].toLowerCase();
+
+  if(
+    line === 'giá:'
+    ||
+    line === 'giá'
+  ) {
+
+    const nextLine = lines[j + 1] || '';
+
+    const match = nextLine.match(
+      /\d+[.,]?\d*\s?(k|tr|m|đ|vnđ)?/i
+    );
+
+    if(match) {
+
+      price = match[0];
+    }
+
+    break;
+  }
 }
 
 const positiveKeywords = [
