@@ -80,9 +80,16 @@ const shortContent = content
   .replace(/\s+/g, ' ')
   .slice(0, 1500);
     const lowerText = shortContent.toLowerCase();
-let price = '_';
+    if(!shortContent.trim()) {
+
+  console.log('NO CONTENT');
+
+  continue;
+}
+
 let stock = 'Còn';
 let price = '_';
+
 // ===== MAIN PRICE =====
 
 const mainPriceMatch = lowerText.match(
@@ -95,7 +102,19 @@ if(mainPriceMatch) {
 }
 
 console.log('PRICE:', price);
-console.log('PRICE:', price);
+console.log(lowerText);
+
+// ===== MAIN PRICE =====
+
+const mainPriceMatch = lowerText.match(
+  /giá\s*[:\-]?\s*\n?\s*(\d+[.,]?\d*\s?(k|tr|m|đ|vnđ)?)/i
+);
+
+if(mainPriceMatch) {
+
+  price = mainPriceMatch[1];
+}
+
     console.log(lowerText);
 if(!shortContent.trim()) {
 
@@ -103,7 +122,6 @@ if(!shortContent.trim()) {
 
   continue;
 }
-let stock = 'Còn';
 const positiveKeywords = [
   'còn',
   'available',
