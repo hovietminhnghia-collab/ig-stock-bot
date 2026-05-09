@@ -1,6 +1,5 @@
 const { chromium } = require('playwright');
 const { google } = require('googleapis');
-const { pipeline } = require('@xenova/transformers');
 
 const creds = JSON.parse(process.env.GOOGLE_KEY);
 
@@ -30,10 +29,6 @@ async function run() {
   });
 
   const page = await browser.newPage();
-  const classifier = await pipeline(
-  'zero-shot-classification',
-'Xenova/mobilebert-uncased-mnli'
-);
 
   for(let i = 0; i < rows.length; i++) {
 
@@ -61,6 +56,8 @@ const content = await page.evaluate(() => {
 const shortContent = content
   .replace(/\s+/g, ' ')
   .slice(0, 500);
+    const lowerText = shortContent.toLowerCase();
+    console.log(lowerText);
 if(!shortContent.trim()) {
 
   console.log('NO CONTENT');
@@ -69,12 +66,17 @@ if(!shortContent.trim()) {
 }
 let stock = 'Còn';
 
-let votes = 0;
+const positiveKeywords = [
+  'còn',
+  'available',
+  'instock',
+  'in stock',
+  'ready'
+];
 
-// ===== RULE ENGINE =====
-
-const hardKeywords = [
+const negativeKeywords = [
   '❌sold❌',
+  'sold',
   'sold out',
   'đã có chủ',
   'bán hết',
@@ -82,46 +84,38 @@ const hardKeywords = [
   'taken',
   'pass',
   'bay rồi',
-  'không còn'
+  'không còn',
+  'no longer available'
 ];
 
-const lowerText = shortContent.toLowerCase();
-console.log(lowerText);
-const matchedKeyword = hardKeywords.some(
-  keyword => lowerText.includes(keyword)
-);
+let positiveScore = 0;
+let negativeScore = 0;
 
-if(matchedKeyword) {
-  votes += 2;
-}
+positiveKeywords.forEach(keyword => {
 
-// ===== AI =====
+  if(lowerText.includes(keyword)) {
+    positiveScore++;
+  }
+});
 
-const result = await classifier(
-  shortContent,
-  [
-    'Sản phẩm còn hàng',
-    'Sản phẩm đã hết hàng'
-  ]
-);
-console.log('CONTENT:');
-console.log(shortContent);
-console.log(result);
+negativeKeywords.forEach(keyword => {
 
-if (
-  result.labels[0] === 'Sản phẩm đã hết hàng'
-  &&
-  result.scores[0] > 0.85
-) {
-  votes++;
-}
+  if(lowerText.includes(keyword)) {
+    negativeScore++;
+  }
+});
 
-// ===== FINAL DECISION =====
-console.log('Votes:', votes);
-if(votes >= 2) {
+console.log('Positive:', positiveScore);
+console.log('Negative:', negativeScore);
+
+if(negativeScore > positiveScore) {
   stock = 'Không';
 }
-else if(votes === 1) {
+else if(
+  negativeScore === positiveScore
+  &&
+  negativeScore > 0
+) {
   stock = 'CHECK';
 }
 else {
