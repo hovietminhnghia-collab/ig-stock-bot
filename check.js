@@ -80,6 +80,7 @@ const shortContent = content
   .replace(/\s+/g, ' ')
   .slice(0, 500);
     const lowerText = shortContent.toLowerCase();
+let price = '_';
     const pricePatterns = [
 
   /\b\d+\s?k\b/gi,
@@ -108,7 +109,6 @@ if(!shortContent.trim()) {
   continue;
 }
 let stock = 'Còn';
-let price = '_';
 const positiveKeywords = [
   'còn',
   'available',
@@ -165,10 +165,21 @@ else {
   stock = 'Còn';
 }
 const rowNumber = i + 2;
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: `C${rowNumber}`,
-      await sheets.spreadsheets.values.update({
+
+// UPDATE STOCK
+
+await sheets.spreadsheets.values.update({
+  spreadsheetId,
+  range: `C${rowNumber}`,
+  valueInputOption: 'RAW',
+  requestBody: {
+    values: [[stock]]
+  }
+});
+
+// UPDATE PRICE
+
+await sheets.spreadsheets.values.update({
   spreadsheetId,
   range: `D${rowNumber}`,
   valueInputOption: 'RAW',
