@@ -80,6 +80,26 @@ const shortContent = content
   .replace(/\s+/g, ' ')
   .slice(0, 500);
     const lowerText = shortContent.toLowerCase();
+    const pricePatterns = [
+
+  /\b\d+\s?k\b/gi,
+  /\b\d+[.,]?\d*\s?tr\b/gi,
+  /\b\d{2,3}[.,]\d{3}\b/g,
+  /\$\s?\d+\b/g
+];
+
+for (const pattern of pricePatterns) {
+
+  const match = lowerText.match(pattern);
+
+  if(match) {
+
+    price = match[0];
+    break;
+  }
+}
+
+console.log('PRICE:', price);
     console.log(lowerText);
 if(!shortContent.trim()) {
 
@@ -88,7 +108,7 @@ if(!shortContent.trim()) {
   continue;
 }
 let stock = 'Còn';
-
+let price = '_';
 const positiveKeywords = [
   'còn',
   'available',
@@ -148,6 +168,14 @@ const rowNumber = i + 2;
     await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: `C${rowNumber}`,
+      await sheets.spreadsheets.values.update({
+  spreadsheetId,
+  range: `D${rowNumber}`,
+  valueInputOption: 'RAW',
+  requestBody: {
+    values: [[price]]
+  }
+});
       valueInputOption: 'RAW',
       requestBody: {
         values: [[stock]]
