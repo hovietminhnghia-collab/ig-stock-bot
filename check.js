@@ -41,21 +41,30 @@ async function run() {
 
     console.log('Checking:', url);
 
-    await page.goto(url, {
-      waitUntil: 'networkidle'
-    });
+await page.goto(url, {
+  waitUntil: 'domcontentloaded',
+  timeout: 60000
+});
+
+await page.waitForTimeout(5000);
 
 const content = await page.evaluate(() => {
 
-  const meta =
-    document.querySelector(
-      'meta[property="og:description"]'
-    );
+  const scripts = Array.from(
+    document.querySelectorAll('script')
+  );
 
-  return meta ? meta.content : '';
+  return scripts
+    .map(s => s.innerText)
+    .join(' ');
 });
     const shortContent = content.slice(0, 3000);
+if(!shortContent.trim()) {
 
+  console.log('NO CONTENT');
+
+  continue;
+}
 let stock = 'Còn';
 
 let votes = 0;
@@ -93,7 +102,8 @@ const result = await classifier(
     'Sản phẩm đã hết hàng'
   ]
 );
-
+console.log('CONTENT:');
+console.log(shortContent);
 console.log(result);
 
 if (
@@ -105,7 +115,7 @@ if (
 }
 
 // ===== FINAL DECISION =====
-
+console.log('Votes:', votes);
 if(votes >= 2) {
   stock = 'Không';
 }
