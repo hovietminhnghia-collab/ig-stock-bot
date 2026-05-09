@@ -187,12 +187,8 @@ await sheets.spreadsheets.values.update({
     values: [[price]]
   }
 });
-      valueInputOption: 'RAW',
-      requestBody: {
-        values: [[stock]]
-      }
-    });
 
+console.log(`Row ${rowNumber} => ${stock} | ${price}`);
     console.log(`Row ${rowNumber} => ${stock}`);
   }
 
