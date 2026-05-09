@@ -81,31 +81,20 @@ const shortContent = content
   .slice(0, 1500);
     const lowerText = shortContent.toLowerCase();
 let price = '_';
-const pricePatterns = [
+let stock = 'Còn';
+let price = '_';
+// ===== MAIN PRICE =====
 
-  /\b\d+\s?k\b/gi,
-  /\b\d+[.,]?\d*\s?tr\b/gi,
-  /\b\d+[.,]?\d*\s?m\b/gi,
-  /\b\d+[.,]?\d+\s?tr\b/gi,
-  /\b\d{2,3}[.,]\d{3}\b/g,
-  /\$\s?\d+\b/g,
+const mainPriceMatch = lowerText.match(
+  /giá\s*[:\-]?\s*\n?\s*(\d+[.,]?\d*\s?(k|tr|m|đ|vnđ)?)/i
+);
 
-  /giá\s*[:\-]?\s*\d+\s?[ktrm]+/gi,
-  /price\s*[:\-]?\s*\d+\s?[ktrm]+/gi,
-  /only\s*\d+\s?[ktrm]+/gi
-];
+if(mainPriceMatch) {
 
-for (const pattern of pricePatterns) {
-
-  const match = lowerText.match(pattern);
-console.log(match);
-  if(match) {
-
-    price = match[0];
-    break;
-  }
+  price = mainPriceMatch[1];
 }
 
+console.log('PRICE:', price);
 console.log('PRICE:', price);
     console.log(lowerText);
 if(!shortContent.trim()) {
