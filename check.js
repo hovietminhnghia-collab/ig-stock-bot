@@ -90,11 +90,6 @@ let stock = 'Còn';
 let price = '_';
 // ===== MAIN PRICE =====
 
-const shortContent = content
-  .slice(0, 3000);
-
-const lowerText = shortContent.toLowerCase();
-
 const lines = shortContent
   .split('\n')
   .map(line => line.trim());
@@ -204,7 +199,6 @@ await sheets.spreadsheets.values.update({
 });
 
 console.log(`Row ${rowNumber} => ${stock} | ${price}`);
-    console.log(`Row ${rowNumber} => ${stock}`);
   }
 
   await browser.close();
