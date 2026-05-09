@@ -77,8 +77,7 @@ const content = await page.evaluate(() => {
   `;
 });
 const shortContent = content
-  .replace(/\s+/g, ' ')
-  .slice(0, 1500);
+  .slice(0, 3000);
     const lowerText = shortContent.toLowerCase();
     if(!shortContent.trim()) {
 
@@ -91,7 +90,12 @@ let stock = 'Còn';
 let price = '_';
 // ===== MAIN PRICE =====
 
-const lines = content
+const shortContent = content
+  .slice(0, 3000);
+
+const lowerText = shortContent.toLowerCase();
+
+const lines = shortContent
   .split('\n')
   .map(line => line.trim());
 
