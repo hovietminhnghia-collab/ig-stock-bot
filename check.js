@@ -92,10 +92,6 @@ let price = '_';
 
 // ===== MAIN PRICE =====
 
-const mainPriceMatch = lowerText.match(
-  /giá\s*[:\-]?\s*\n?\s*(\d+[.,]?\d*\s?(k|tr|m|đ|vnđ)?)/i
-);
-
 if(mainPriceMatch) {
 
   price = mainPriceMatch[1];
