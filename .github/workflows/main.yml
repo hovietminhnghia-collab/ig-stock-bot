@@ -20,10 +20,14 @@ jobs:
 
     - run: npm init -y
 
-    - run: npm install playwright googleapis @xenova/transformers
+    - run: npm install playwright googleapis
 
     - run: npx playwright install
 
-    - run: node check.js
+    - run: node stock.js
+      env:
+        GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
+
+    - run: node price.js
       env:
         GOOGLE_KEY: ${{ secrets.GOOGLE_KEY }}
