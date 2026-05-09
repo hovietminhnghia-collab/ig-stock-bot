@@ -42,16 +42,19 @@ await page.goto(url, {
 });
 
 await page.waitForTimeout(5000);
-
 const content = await page.evaluate(() => {
 
-  const scripts = Array.from(
-    document.querySelectorAll('script')
-  );
+  const title =
+    document.querySelector(
+      'meta[property="og:title"]'
+    )?.content || '';
 
-  return scripts
-    .map(s => s.innerText)
-    .join(' ');
+  const description =
+    document.querySelector(
+      'meta[property="og:description"]'
+    )?.content || '';
+
+  return `${title} ${description}`;
 });
 const shortContent = content
   .replace(/\s+/g, ' ')
