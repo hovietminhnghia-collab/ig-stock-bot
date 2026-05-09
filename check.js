@@ -89,17 +89,6 @@ const shortContent = content
 
 let stock = 'Còn';
 let price = '_';
-
-// ===== MAIN PRICE =====
-
-if(mainPriceMatch) {
-
-  price = mainPriceMatch[1];
-}
-
-console.log('PRICE:', price);
-console.log(lowerText);
-
 // ===== MAIN PRICE =====
 
 const mainPriceMatch = lowerText.match(
@@ -111,13 +100,6 @@ if(mainPriceMatch) {
   price = mainPriceMatch[1];
 }
 
-    console.log(lowerText);
-if(!shortContent.trim()) {
-
-  console.log('NO CONTENT');
-
-  continue;
-}
 const positiveKeywords = [
   'còn',
   'available',
