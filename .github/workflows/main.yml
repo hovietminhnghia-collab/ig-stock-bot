@@ -21,7 +21,7 @@ jobs:
 
     - run: npm init -y
 
-    - run: npm install playwright googleapis
+   - run: npm install playwright googleapis @google/generative-ai
 
     - run: npx playwright install
 
