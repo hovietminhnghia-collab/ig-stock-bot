@@ -106,10 +106,21 @@ for(let j = 0; j < lines.length; j++) {
 
     const nextLine = lines[j + 1] || '';
 
-    const match = nextLine.match(
-      /\d+[.,]?\d*\s?(k|tr|m|đ|vnđ)?/i
-    );
+const match = nextLine.match(
+  /\d+[.,]?\d*\s?(k|tr|đ|vnđ)/i
+);
+if(
+  nextLine.includes('mp')
+  ||
+  nextLine.includes('mah')
+  ||
+  nextLine.includes('hz')
+  ||
+  nextLine.includes('gb')
+) {
 
+  continue;
+}
     if(match) {
 
       price = match[0];
