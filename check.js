@@ -78,21 +78,27 @@ const content = await page.evaluate(() => {
 });
 const shortContent = content
   .replace(/\s+/g, ' ')
-  .slice(0, 500);
+  .slice(0, 1500);
     const lowerText = shortContent.toLowerCase();
 let price = '_';
-    const pricePatterns = [
+const pricePatterns = [
 
   /\b\d+\s?k\b/gi,
   /\b\d+[.,]?\d*\s?tr\b/gi,
+  /\b\d+[.,]?\d*\s?m\b/gi,
+  /\b\d+[.,]?\d+\s?tr\b/gi,
   /\b\d{2,3}[.,]\d{3}\b/g,
-  /\$\s?\d+\b/g
+  /\$\s?\d+\b/g,
+
+  /giá\s*[:\-]?\s*\d+\s?[ktrm]+/gi,
+  /price\s*[:\-]?\s*\d+\s?[ktrm]+/gi,
+  /only\s*\d+\s?[ktrm]+/gi
 ];
 
 for (const pattern of pricePatterns) {
 
   const match = lowerText.match(pattern);
-
+console.log(match);
   if(match) {
 
     price = match[0];
